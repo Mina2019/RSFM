@@ -49,48 +49,46 @@
     <div class="notice"><b>Planning prototype:</b> RSFM uses editable default thresholds and factor shares. Agencies should replace them with local standards and observed pavement data before real repair decisions.</div>
     <button id="guide" class="secondary">Download RSFM guide</button>
 
-    <section class="defaults">
-      <h2>RSFM default tables</h2>
-      <p class="hint">These values are editable. An agency can enter its own repair thresholds and factor shares before running a forecast.</p>
-      <div class="tables">
-        <div><table><thead><tr><th>Crack type</th><th>Repair threshold (cm³)</th></tr></thead><tbody>
-          <tr><td>Alligator / fatigue</td><td><input id="threshold-alligator" type="number" min="1" value="12500"></td></tr>
-          <tr><td>Longitudinal</td><td><input id="threshold-longitudinal" type="number" min="1" value="1000"></td></tr>
-          <tr><td>Transverse</td><td><input id="threshold-transverse" type="number" min="1" value="1000"></td></tr>
-          <tr><td>Block</td><td><input id="threshold-block" type="number" min="1" value="2000"></td></tr>
-          <tr><td>Edge</td><td><input id="threshold-edge" type="number" min="1" value="2500"></td></tr>
-        </tbody></table></div>
-        <div><table><thead><tr><th>Relative deterioration factor</th><th>Share (%)</th></tr></thead><tbody>
-          <tr><td>Traffic volume and growth</td><td><input id="share-traffic" type="number" min="0" max="100" step="1" value="30"></td></tr>
-          <tr><td>Heavy vehicles</td><td><input id="share-heavy" type="number" min="0" max="100" step="1" value="10"></td></tr>
-          <tr><td>Freeze-thaw</td><td><input id="share-freeze" type="number" min="0" max="100" step="1" value="15"></td></tr>
-          <tr><td>Rain / moisture</td><td><input id="share-rain" type="number" min="0" max="100" step="1" value="20"></td></tr>
-          <tr><td>Pavement age</td><td><input id="share-age" type="number" min="0" max="100" step="1" value="25"></td></tr>
-        </tbody></table></div>
-      </div>
-    </section>
-
     <section class="steps">
       <section class="step">
-        <div class="stephead"><span class="number">1</span><div><h2>Add the image</h2><p class="hint">Upload a crack photo manually or import a RoadScan image record.</p></div></div>
+        <div class="stephead"><span class="number">1</span><div><h2>Set agency default tables</h2><p class="hint">These values are editable. An agency can enter its own repair thresholds and factor shares before running a forecast.</p></div></div>
+        <div class="tables">
+          <div><table><thead><tr><th>Crack type</th><th>Repair threshold (cm³)</th></tr></thead><tbody>
+            <tr><td>Alligator / fatigue</td><td><input id="threshold-alligator" type="number" min="1" value="12500"></td></tr>
+            <tr><td>Longitudinal</td><td><input id="threshold-longitudinal" type="number" min="1" value="1000"></td></tr>
+            <tr><td>Transverse</td><td><input id="threshold-transverse" type="number" min="1" value="1000"></td></tr>
+            <tr><td>Block</td><td><input id="threshold-block" type="number" min="1" value="2000"></td></tr>
+            <tr><td>Edge</td><td><input id="threshold-edge" type="number" min="1" value="2500"></td></tr>
+          </tbody></table></div>
+          <div><table><thead><tr><th>Relative deterioration factor</th><th>Share (%)</th></tr></thead><tbody>
+            <tr><td>Traffic volume and growth</td><td><input id="share-traffic" type="number" min="0" max="100" step="1" value="30"></td></tr>
+            <tr><td>Heavy vehicles</td><td><input id="share-heavy" type="number" min="0" max="100" step="1" value="10"></td></tr>
+            <tr><td>Freeze-thaw</td><td><input id="share-freeze" type="number" min="0" max="100" step="1" value="15"></td></tr>
+            <tr><td>Rain / moisture</td><td><input id="share-rain" type="number" min="0" max="100" step="1" value="20"></td></tr>
+            <tr><td>Pavement age</td><td><input id="share-age" type="number" min="0" max="100" step="1" value="25"></td></tr>
+          </tbody></table></div>
+        </div>
+      </section>
+      <section class="step">
+        <div class="stephead"><span class="number">2</span><div><h2>Add the image</h2><p class="hint">Upload a crack photo manually or import a RoadScan image record.</p></div></div>
         <div class="two"><div><label>Manual fracture photo</label><input id="photo" type="file" accept="image/*"></div><div><label>RoadScan record (optional JSON)</label><input id="roadscan" type="file" accept="application/json"></div></div>
         <div class="two"><div><label>Road / segment name</label><input id="road" placeholder="Example: Main Street"></div><div><label>Inspection date</label><input id="date" type="date"></div></div>
         <img id="preview" class="preview" alt="Uploaded road crack">
       </section>
 
       <section class="step">
-        <div class="stephead"><span class="number">2</span><div><h2>Measure the crack</h2><p class="hint">The engineer selects the crack type and enters its current length, width, and depth in centimetres.</p></div></div>
+        <div class="stephead"><span class="number">3</span><div><h2>Measure the crack</h2><p class="hint">The engineer selects the crack type and enters its current length, width, and depth in centimetres.</p></div></div>
         <div class="grid"><div><label>Crack type</label><select id="type"><option value="alligator">Alligator / fatigue</option><option value="longitudinal">Longitudinal</option><option value="transverse">Transverse</option><option value="block" selected>Block</option><option value="edge">Edge</option></select></div><div><label>Length (cm)</label><input id="length" type="number" min="0" step="0.1" value="7"></div><div><label>Width (cm)</label><input id="width" type="number" min="0" step="0.1" value="5"></div></div>
         <div class="grid"><div><label>Depth (cm)</label><input id="depth" type="number" min="0" step="0.1" value="3"></div><div><label>Forecast period (years)</label><input id="years" type="number" min="1" step="1" value="5"></div></div>
       </section>
 
       <section class="step">
-        <div class="stephead"><span class="number">3</span><div><h2>Add repaired Road A</h2><p class="hint">Use a comparable road where the same crack type has reached its repair threshold. Its average growth establishes the base rate.</p></div></div>
+        <div class="stephead"><span class="number">4</span><div><h2>Add repaired Road A</h2><p class="hint">Use a comparable road where the same crack type has reached its repair threshold. Its average growth establishes the base rate.</p></div></div>
         <div class="grid"><div><label>Road A age (years)</label><input id="ageA" type="number" min="0.1" step="0.1" value="5"></div><div><label>Cars / day</label><input id="carsA" type="number" min="0" step="1000" value="100000"></div><div><label>Heavy vehicles (%)</label><input id="hvA" type="number" min="0" max="100" step="0.1" value="5"></div><div><label>Freeze months / year</label><input id="freezeA" type="number" min="0" step="0.1" value="2"></div><div><label>Rain months / year</label><input id="rainA" type="number" min="0" step="0.1" value="2"></div></div>
       </section>
 
       <section class="step">
-        <div class="stephead"><span class="number">4</span><div><h2>Add Road B conditions and forecast</h2><p class="hint">RSFM compares Road B with Road A using traffic, heavy vehicles, freeze months, rain months, and pavement age.</p></div></div>
+        <div class="stephead"><span class="number">5</span><div><h2>Add Road B conditions and forecast</h2><p class="hint">RSFM compares Road B with Road A using traffic, heavy vehicles, freeze months, rain months, and pavement age.</p></div></div>
         <div class="grid"><div><label>Road B age (years)</label><input id="ageB" type="number" min="0" step="0.1" value="10"></div><div><label>Cars / day</label><input id="carsB" type="number" min="0" step="1000" value="50000"></div><div><label>Heavy vehicles (%)</label><input id="hvB" type="number" min="0" max="100" step="0.1" value="2"></div><div><label>Freeze months / year</label><input id="freezeB" type="number" min="0" step="0.1" value="2"></div><div><label>Rain months / year</label><input id="rainB" type="number" min="0" step="0.1" value="2"></div></div>
         <button id="forecast">Forecast repair year</button>
         <div id="result" class="result"></div>
