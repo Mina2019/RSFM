@@ -13,6 +13,13 @@
     h1 { margin:5px 0 8px; font-size:clamp(2.6rem,7vw,4.7rem); letter-spacing:-.07em; }
     .lead { max-width:670px; color:#53717d; line-height:1.55; }
     .notice { margin:20px 0; padding:13px 15px; border-left:4px solid var(--amber); border-radius:8px; background:#fff9e9; color:#675a3d; font-size:.9rem; line-height:1.5; }
+    .defaults { background:white; border:1px solid var(--line); border-radius:20px; padding:21px; margin:20px 0; }
+    .defaults h2 { margin-bottom:5px; }
+    .tables { display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:15px; }
+    table { width:100%; border-collapse:collapse; font-size:.88rem; }
+    th,td { padding:8px 5px; text-align:left; border-bottom:1px solid var(--line); }
+    th { color:#607881; font-size:.72rem; letter-spacing:.07em; text-transform:uppercase; }
+    td input { padding:7px 8px; min-width:0; }
     .steps { display:grid; gap:14px; margin-top:20px; }
     .step { background:white; border:1px solid var(--line); border-radius:20px; padding:21px; }
     .stephead { display:flex; gap:12px; align-items:center; margin-bottom:14px; }
@@ -31,7 +38,7 @@
     .result strong { color:var(--green); }
     .result.critical strong { color:var(--red); }
     .metric { display:inline-block; margin:4px 16px 4px 0; font-weight:750; }
-    @media(max-width:620px) { .grid,.two { grid-template-columns:1fr; } }
+    @media(max-width:620px) { .grid,.two,.tables { grid-template-columns:1fr; } }
   </style>
 </head>
 <body>
@@ -41,6 +48,27 @@
     <p class="lead">Road Surface Fracture Model. Upload a road-crack image, compare it with a repaired reference crack, and forecast the repair year.</p>
     <div class="notice"><b>Planning prototype:</b> RSFM uses editable default thresholds and factor shares. Agencies should replace them with local standards and observed pavement data before real repair decisions.</div>
     <button id="guide" class="secondary">Download RSFM guide</button>
+
+    <section class="defaults">
+      <h2>RSFM default tables</h2>
+      <p class="hint">These values are editable. An agency can enter its own repair thresholds and factor shares before running a forecast.</p>
+      <div class="tables">
+        <div><table><thead><tr><th>Crack type</th><th>Repair threshold (cm³)</th></tr></thead><tbody>
+          <tr><td>Alligator / fatigue</td><td><input id="threshold-alligator" type="number" min="1" value="12500"></td></tr>
+          <tr><td>Longitudinal</td><td><input id="threshold-longitudinal" type="number" min="1" value="1000"></td></tr>
+          <tr><td>Transverse</td><td><input id="threshold-transverse" type="number" min="1" value="1000"></td></tr>
+          <tr><td>Block</td><td><input id="threshold-block" type="number" min="1" value="2000"></td></tr>
+          <tr><td>Edge</td><td><input id="threshold-edge" type="number" min="1" value="2500"></td></tr>
+        </tbody></table></div>
+        <div><table><thead><tr><th>Relative deterioration factor</th><th>Share (%)</th></tr></thead><tbody>
+          <tr><td>Traffic volume and growth</td><td><input id="share-traffic" type="number" min="0" max="100" step="1" value="30"></td></tr>
+          <tr><td>Heavy vehicles</td><td><input id="share-heavy" type="number" min="0" max="100" step="1" value="10"></td></tr>
+          <tr><td>Freeze-thaw</td><td><input id="share-freeze" type="number" min="0" max="100" step="1" value="15"></td></tr>
+          <tr><td>Rain / moisture</td><td><input id="share-rain" type="number" min="0" max="100" step="1" value="20"></td></tr>
+          <tr><td>Pavement age</td><td><input id="share-age" type="number" min="0" max="100" step="1" value="25"></td></tr>
+        </tbody></table></div>
+      </div>
+    </section>
 
     <section class="steps">
       <section class="step">
@@ -52,7 +80,7 @@
 
       <section class="step">
         <div class="stephead"><span class="number">2</span><div><h2>Measure the crack</h2><p class="hint">The engineer selects the crack type and enters its current length, width, and depth in centimetres.</p></div></div>
-        <div class="grid"><div><label>Crack type</label><select id="type"><option value="12500">Alligator / fatigue</option><option value="1000">Longitudinal</option><option value="1000">Transverse</option><option value="2000" selected>Block</option><option value="2500">Edge</option></select></div><div><label>Length (cm)</label><input id="length" type="number" min="0" step="0.1" value="7"></div><div><label>Width (cm)</label><input id="width" type="number" min="0" step="0.1" value="5"></div></div>
+        <div class="grid"><div><label>Crack type</label><select id="type"><option value="alligator">Alligator / fatigue</option><option value="longitudinal">Longitudinal</option><option value="transverse">Transverse</option><option value="block" selected>Block</option><option value="edge">Edge</option></select></div><div><label>Length (cm)</label><input id="length" type="number" min="0" step="0.1" value="7"></div><div><label>Width (cm)</label><input id="width" type="number" min="0" step="0.1" value="5"></div></div>
         <div class="grid"><div><label>Depth (cm)</label><input id="depth" type="number" min="0" step="0.1" value="3"></div><div><label>Forecast period (years)</label><input id="years" type="number" min="1" step="1" value="5"></div></div>
       </section>
 
@@ -96,12 +124,15 @@
     });
 
     $('forecast').onclick = () => {
-      const threshold = val('type');
+      const threshold = val(`threshold-${$('type').value}`);
       const current = val('length') * val('width') * val('depth');
       const a = [val('carsA'), val('hvA'), val('freezeA'), val('rainA'), val('ageA')];
       if (a.some(v => v <= 0)) { alert('Each Road A value must be greater than zero.'); return; }
       const ratios = [val('carsB') / a[0], val('hvB') / a[1], val('freezeB') / a[2], val('rainB') / a[3], val('ageB') / a[4]];
-      const rdf = (.30 * ratios[0]) + (.10 * ratios[1]) + (.15 * ratios[2]) + (.20 * ratios[3]) + (.25 * ratios[4]);
+      const shares = [val('share-traffic') / 100, val('share-heavy') / 100, val('share-freeze') / 100, val('share-rain') / 100, val('share-age') / 100];
+      const totalShare = shares.reduce((sum, share) => sum + share, 0);
+      if (Math.abs(totalShare - 1) > 0.0001) { alert('The five factor shares must add up to 100%.'); return; }
+      const rdf = shares.reduce((sum, share, index) => sum + share * ratios[index], 0);
       const rateA = threshold / a[4];
       const rateB = rateA * rdf;
       const years = val('years');
